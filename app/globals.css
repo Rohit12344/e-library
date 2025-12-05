@@ -364,15 +364,8 @@
   .select-item {
     @apply focus:bg-dark-600 focus:text-light-100;
   }
-}
 
-@utility gradient-vertical {
-    background: var(--gradient-vertical);
-}
-
-@layer utilities {
-
-
+  
   .gradient-gray {
     background: linear-gradient(270deg, #37363a 0%, #353637 100%);
   }
@@ -425,3 +418,8 @@
     @apply mt-2 text-3xl font-semibold text-white xs:text-5xl;
   }
 }
+
+@utility gradient-vertical {
+    background: var(--gradient-vertical);
+}
+
