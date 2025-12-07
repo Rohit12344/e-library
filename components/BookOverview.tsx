@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
 import BookCover from "./BookCover";
+import BookCoverSvg from "./BookCoverSvg";
 
 const BookOverview = ({
   title,
@@ -63,7 +64,6 @@ const BookOverview = ({
           <p className="font-bebas-neue text-xl text-dark-100">Borrow</p>
         </Button>
       </div>
-
       <div className="relative flex flex-1 justify-center">
         <div className="relative">
           <BookCover
@@ -73,7 +73,13 @@ const BookOverview = ({
             coverImage={cover}
           ></BookCover>
 
-          <div className="absolute left-16 top-10 rotate-12 opacity-40 max-sm:hidden"></div>
+          <div className="absolute left-16 top-10 rotate-12 opacity-40 max-sm:hidden">
+            <BookCover
+              variant="wide"
+              coverColor={color}
+              coverImage={cover}
+            ></BookCover>
+          </div>
         </div>
       </div>
     </section>
