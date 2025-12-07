@@ -157,7 +157,7 @@ export const sampleBooks = [
     id: 7,
     title: "Calculus With Analytic Geometry",
     author: "George Simmons",
-    genre: "mathematics",
+    genre: "Mathematics",
     rating: 4.7,
     total_copies: 25,
     available_copies: 3,

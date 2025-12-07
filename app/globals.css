@@ -191,7 +191,7 @@
   }
 
   .book-btn {
-    @apply bg-dark-600 mt-3 min-h-14 w-full font-bebas-neue text-base text-primary;
+    @apply bg-dark-600 mt-3 min-h-14 w-full font-bebas-neue text-base text-dark-100;
   }
 
   /* Borrowed Book */
@@ -365,7 +365,6 @@
     @apply focus:bg-dark-600 focus:text-light-100;
   }
 
-  
   .gradient-gray {
     background: linear-gradient(270deg, #37363a 0%, #353637 100%);
   }
@@ -420,6 +419,5 @@
 }
 
 @utility gradient-vertical {
-    background: var(--gradient-vertical);
+  background: var(--gradient-vertical);
 }
-
