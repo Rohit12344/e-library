@@ -74,11 +74,6 @@
   --radius-xl: calc(var(--radius) + 4px);
   --breakpoint-xs: 480px;
   --background-image-pattern: url("/images/pattern.webp");
-  --background-gradient-vertical: linear-gradient(
-    180deg,
-    #12141d 0%,
-    #12151f 100%
-  );
 }
 
 :root {
@@ -419,5 +414,5 @@
 }
 
 @utility gradient-vertical {
-  background: var(--gradient-vertical);
+  background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
 }

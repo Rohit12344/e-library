@@ -1,8 +1,6 @@
 import Image from "next/image";
-import React from "react";
 import { Button } from "./ui/button";
 import BookCover from "./BookCover";
-import BookCoverSvg from "./BookCoverSvg";
 
 const BookOverview = ({
   title,
