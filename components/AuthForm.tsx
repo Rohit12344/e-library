@@ -21,6 +21,7 @@ import { Input } from "./ui/input";
 import Link from "next/link";
 import { FIELD_NAMES, FIELD_TYPES } from "@/constants";
 import ImageUpload from "./ImageUpload";
+import { Button } from "./ui/button";
 
 interface Props<T extends FieldValues> {
   type: "SIGN_IN" | "SIGN_UP";
@@ -64,7 +65,7 @@ const AuthForm = <T extends FieldValues>({
               name={key as Path<T>}
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field key={key}>
+                <Field key={key} data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="username" className="capitalize">
                     {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
                   </FieldLabel>
@@ -74,18 +75,19 @@ const AuthForm = <T extends FieldValues>({
                     <Input
                       id="username"
                       type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
+                      aria-invalid={fieldState.invalid}
                       {...field}
                       className="form-input"
                     />
                   )}
-                  <FieldDescription>
-                    Choose a unique username for your account.
-                  </FieldDescription>
                 </Field>
               )}
             />
           ))}
         </FieldSet>
+        <Button type="submit" className="form-btn">
+          {isSignIn ? "Sign In" : "Sign Up"}
+        </Button>
       </form>
       <p className="text-center text-base font-medium">
         {isSignIn ? "New to BookWise? " : "Already have an account? "}
