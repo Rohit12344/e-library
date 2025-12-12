@@ -1,8 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Controller,
   DefaultValues,
   FieldValues,
+  Path,
   SubmitHandler,
   useForm,
   UseFormReturn,
@@ -16,6 +18,9 @@ import {
   FieldSet,
 } from "./ui/field";
 import { Input } from "./ui/input";
+import Link from "next/link";
+import { FIELD_NAMES, FIELD_TYPES } from "@/constants";
+import ImageUpload from "./ImageUpload";
 
 interface Props<T extends FieldValues> {
   type: "SIGN_IN" | "SIGN_UP";
@@ -30,6 +35,7 @@ const AuthForm = <T extends FieldValues>({
   defaultValues,
   onSubmit,
 }: Props<T>) => {
+  const isSignIn = type === "SIGN_IN";
   const form: UseFormReturn<T> = useForm({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
@@ -38,26 +44,58 @@ const AuthForm = <T extends FieldValues>({
   const handleSubmit: SubmitHandler<T> = async (data) => {};
 
   return (
-    <div>
-      AuthForm -- {type}
-      <FieldSet>
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="username">Username</FieldLabel>
-            <Input id="username" type="text" placeholder="Max Leiter" />
-            <FieldDescription>
-              Choose a unique username for your account.
-            </FieldDescription>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <FieldDescription>
-              Must be at least 8 characters long.
-            </FieldDescription>
-            <Input id="password" type="password" placeholder="••••••••" />
-          </Field>
-        </FieldGroup>
-      </FieldSet>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-semibold text-white">
+        {isSignIn ? "Welcome Back to BookWise" : "Create your library account"}
+      </h1>
+      <p className="text-light-100">
+        {isSignIn
+          ? "Access the vast collection of resources, and stay updated"
+          : "Please complete all fields and upload a valid university ID to gain access to the library"}
+      </p>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-8 w-full"
+      >
+        <FieldSet>
+          {Object.keys(defaultValues).map((key) => (
+            <Controller
+              key={key}
+              name={key as Path<T>}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field key={key}>
+                  <FieldLabel htmlFor="username" className="capitalize">
+                    {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
+                  </FieldLabel>
+                  {field.name === "universityCard" ? (
+                    <ImageUpload />
+                  ) : (
+                    <Input
+                      id="username"
+                      type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
+                      {...field}
+                      className="form-input"
+                    />
+                  )}
+                  <FieldDescription>
+                    Choose a unique username for your account.
+                  </FieldDescription>
+                </Field>
+              )}
+            />
+          ))}
+        </FieldSet>
+      </form>
+      <p className="text-center text-base font-medium">
+        {isSignIn ? "New to BookWise? " : "Already have an account? "}
+        <Link
+          href={isSignIn ? "/sign-up" : "/sign-in"}
+          className="font-bold text-primary"
+        >
+          {isSignIn ? "Create an account" : "Sign In"}
+        </Link>
+      </p>
     </div>
   );
 };
