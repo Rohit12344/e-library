@@ -1,17 +1,10 @@
 "use client";
 
 import config from "@/lib/config";
-import {
-  Image as IkImage,
-  ImageKitAbortError,
-  ImageKitInvalidRequestError,
-  ImageKitProvider,
-  ImageKitServerError,
-  ImageKitUploadNetworkError,
-  upload,
-} from "@imagekit/next";
+import { Image as IkImage, ImageKitProvider, upload } from "@imagekit/next";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 const {
   env: {
@@ -39,59 +32,76 @@ const authenticator = async () => {
   }
 };
 
-const ImageUpload = () => {
+const ImageUpload = ({
+  onFileChange,
+}: {
+  onFileChange: (filePath: string) => void;
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortController = new AbortController();
   const [file, setFile] = useState<{ filePath: string } | null>(null);
-  // const handleUpload = async () => {
-  //   const fileInput = fileInputRef.current;
-  //   if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-  //     alert("Please select a file to upload");
-  //     return;
-  //   }
+  const handleUpload = async () => {
+    const fileInput = fileInputRef.current;
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      return;
+    }
 
-  //   const file = fileInput.files[0];
+    const currentFile = fileInput.files[0];
 
-  //   let authParams;
-  //   try {
-  //     authParams = await authenticator();
-  //   } catch (authError) {
-  //     console.error("Failed to authenticate for upload:", authError);
-  //     return;
-  //   }
-  //   const { signature, expire, token } = authParams;
+    let authParams;
+    try {
+      authParams = await authenticator();
+    } catch (authError) {
+      console.error("Failed to authenticate for upload:", authError);
+      return;
+    }
+    const { signature, expire, token } = authParams;
 
-  //   try {
-  //     const uploadResponse = await upload({
-  //       expire,
-  //       token,
-  //       signature,
-  //       publicKey,
-  //       file,
-  //       fileName: file.name,
-  //       abortSignal: abortController.signal,
-  //     });
-  //     console.log("Upload response:", uploadResponse);
-  //   } catch (error) {
-  //     if (error instanceof ImageKitAbortError) {
-  //       console.error("Upload aborted:", error.reason);
-  //     } else if (error instanceof ImageKitInvalidRequestError) {
-  //       console.error("Invalid request:", error.message);
-  //     } else if (error instanceof ImageKitUploadNetworkError) {
-  //       console.error("Network error:", error.message);
-  //     } else if (error instanceof ImageKitServerError) {
-  //       console.error("Server error:", error.message);
-  //     } else {
-  //       console.error("Upload error:", error);
-  //     }
-  //   }
-  // };
+    try {
+      const uploadResponse = await upload({
+        expire,
+        token,
+        signature,
+        publicKey,
+        file: currentFile,
+        fileName: currentFile.name,
+        abortSignal: abortController.signal,
+      });
+      if (uploadResponse.filePath) {
+        setFile({ filePath: uploadResponse.filePath });
+      }
+      toast("Image uploaded successfully", {
+        description: `${file?.filePath} uploaded successfully.`,
+      });
+    } catch (error) {
+      toast.error("Image uploaded failed", {
+        description: `Your image upload could not be uploaded. Please try again.`,
+      });
+    }
+  };
 
-  const onError = () => {};
-  const onSuccess = (res: unknown) => {};
+  const onError = (error: unknown) => {
+    toast("Image uploaded failed", {
+      description: `Your image upload could not be uploaded. Please try again.`,
+    });
+  };
+  const onChange = async (res: File | null) => {
+    if (res !== null) {
+      onFileChange(res.name);
+      handleUpload();
+    }
+  };
   return (
     <ImageKitProvider urlEndpoint={urlEndpoint}>
-      <input type="file" ref={fileInputRef} className="hidden" />
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onError={onError}
+        onChange={(e) => {
+          onChange(e.target.files ? e.target.files[0] : null);
+        }}
+      />
       <button
         type="button"
         className="upload-btn"
@@ -102,7 +112,6 @@ const ImageUpload = () => {
             fileInputRef.current.click();
           }
         }}
-        onError={onError}
       >
         <Image
           src="/icons/upload.svg"

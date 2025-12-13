@@ -70,10 +70,10 @@ const AuthForm = <T extends FieldValues>({
                     {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
                   </FieldLabel>
                   {field.name === "universityCard" ? (
-                    <ImageUpload />
+                    <ImageUpload onFileChange={field.onChange} />
                   ) : (
                     <Input
-                      id="username"
+                      id={field.name}
                       type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
                       aria-invalid={fieldState.invalid}
                       {...field}
